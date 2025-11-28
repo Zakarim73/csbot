@@ -157,7 +157,8 @@ Templates can be customized by:
 - **Adding branching** - Use `on_success`/`on_failure` for different execution paths
 - **Beacon metadata conditions** - Reference beacon properties with `beacon.user`, `beacon.os`, `beacon.isAdmin`, etc.
 - **Parallel execution** - Set `parallel: true` at workflow level for concurrent action execution
-- **Variable interpolation** - Reference previous outputs with `${action_name}` (future feature)
+- **Defining variables** - Use `variables:` section to define reusable values (e.g., paths, names)
+- **Variable interpolation** - Reference variables with `${variable_name}` or action outputs with `${action_name}`
 
 ## Template Features Overview
 

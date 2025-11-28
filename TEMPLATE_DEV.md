@@ -34,8 +34,47 @@ actions:                         # Required: List of actions to execute
 
 - **name**: Workflow identifier (shown in logs)
 - **beacon_id**: Target beacon ID. If omitted, bot prompts for interactive selection
+- **variables**: Optional key-value map of workflow variables for interpolation
 - **parallel**: Execute all top-level actions concurrently (use with caution)
 - **actions**: Ordered list of actions to execute
+
+### Variables
+
+Define reusable values at the workflow level that can be referenced in any action parameter:
+
+```yaml
+name: Example Workflow
+variables:
+  target_user: "bill"
+  payload_path: "C:\\Windows\\Temp\\payload.exe"
+  audit_dir: "C:\\FolderA"
+  persistence_name: "MyUpdate"
+
+actions:
+  - name: use_variables
+    type: shell
+    parameters:
+      command: 'echo ${payload_path}'
+
+  - name: persistence
+    type: shell
+    parameters:
+      command: 'REG ADD "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run" /v "${persistence_name}" /t REG_EXPAND_SZ /f /d "${payload_path}"'
+```
+
+**Variable Notes:**
+- Variables are available to all actions via `${variable_name}` syntax
+- Variables cannot start with `beacon.` (reserved for beacon metadata)
+- Variables are interpolated before action execution
+- Action outputs with the same name will override variables
+- Use backslash escaping in paths: `C:\\Windows\\System32`
+
+**Loading Order:**
+1. Workflow variables (from `variables:` section)
+2. Beacon metadata (from beacon API, prefixed with `beacon.`)
+3. Action outputs (from executed actions)
+
+Later values override earlier ones if names conflict.
 
 ## Action Types
 

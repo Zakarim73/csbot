@@ -126,6 +126,7 @@ func (e *Executor) Execute(ctx context.Context, wf *Workflow, username, password
 	}
 	e.beacon = beacon
 	e.storeBeaconMetadata()
+	e.storeWorkflowVariables(wf.Variables)
 
 	// Execute workflow
 	e.logInfo("Starting workflow: %s", wf.Name)
@@ -831,4 +832,21 @@ func (e *Executor) storeBeaconMetadata() {
 
 	e.logDebug("Stored beacon metadata for conditions: user=%s, isAdmin=%t, os=%s",
 		e.beacon.User, e.beacon.IsAdmin, e.beacon.OS)
+}
+
+// storeWorkflowVariables stores user-defined variables in outputs map for interpolation
+func (e *Executor) storeWorkflowVariables(variables map[string]string) {
+	if len(variables) == 0 {
+		return
+	}
+
+	e.outputMu.Lock()
+	defer e.outputMu.Unlock()
+
+	for name, value := range variables {
+		e.outputs[name] = value
+		e.logDebug("Stored workflow variable: %s = %s", name, value)
+	}
+
+	e.logInfo("Loaded %d workflow variable(s)", len(variables))
 }

