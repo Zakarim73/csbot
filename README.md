@@ -56,7 +56,7 @@ cp config.yaml.example config.yaml
 
 ```
 -host string         Cobalt Strike host (required unless in config/env)
--port int            Cobalt Strike API port (default: 50433)
+-port int            Cobalt Strike API port (default: 50443)
 -username string     Username for authentication (required unless in config/env)
 -password string     Password for authentication (required unless in config/env)
 -config string       Path to config YAML file
