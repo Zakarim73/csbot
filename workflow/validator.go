@@ -264,8 +264,21 @@ func (v *Validator) validateBOFAction(action Action, prefix string) []Validation
 		return errors
 	}
 
-	// Check if BOF file exists (if not using @files/ prefix)
-	if !strings.HasPrefix(bofPath, "@files/") && !strings.HasPrefix(bofPath, "@artifacts/") {
+	// Check if BOF file exists (if not using @files/ prefix , or variable interpolation)
+	switch {
+	case strings.HasPrefix(bofPath, "@files/") || strings.HasPrefix(bofPath, "@artifacts/"): //remote path check
+		errors = append(errors, ValidationError{
+			Type:     prefix,
+			Message:  "BOF file path check skipped due to remote path",
+			Severity: "warning",
+		})
+	case strings.Contains(bofPath, "${") && strings.Contains(bofPath, "}"): // Variable check
+		errors = append(errors, ValidationError{
+			Type:     prefix,
+			Message:  "BOF file path check skipped due to runtime variable interpolation",
+			Severity: "warning",
+		})
+	default:
 		if _, err := os.Stat(bofPath); os.IsNotExist(err) {
 			errors = append(errors, ValidationError{
 				Type:     prefix,
